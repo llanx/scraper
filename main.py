@@ -6,22 +6,30 @@ from bs4 import BeautifulSoup
 import requests
 import blockTime
 import compoundingSchedule
-
+from pprint import pprint
 json = {'query': '{ pool(id:"0xcde5a11a4acb4ee4c805352cec57e236bdbc3837000200000000000000000019") { name, totalLiquidity, id}}'}
 url = "https://graph-node.beets-ftm-node.com/subgraphs/name/beethovenx"
 r = requests.post(url=url, json=json)
-json_response = r.json()
+json_TVL = r.json()
 
+json = {'query': '{tokenPrices(where: {poolId: "0x03c6b3f09d2504606936b1a4decefad204687890000200000000000000000015"},orderDirection: desc, orderBy: "block", first: 1) {price}}'}
+url = "https://graph-node.beets-ftm-node.com/subgraphs/name/beethovenx"
+r = requests.post(url=url, json=json)
+json_beetsprice = r.json()
 
 beetsperblock = 5.05
 principal = 10000
 FTM_Beetspoolweight = .3012
 secondsInAYr = 31536000
-priceofBeets = 1.16
-TVL_FTM_Beets = float(json_response['data']['pool']['totalLiquidity'])
-FTM_BlocksPerSecond = .87
-APRcalculated = (beetsperblock*FTM_Beetspoolweight*priceofBeets*FTM_BlocksPerSecond*secondsInAYr/TVL_FTM_Beets)*100
+emissionList = [5.05, 5.02, 4.98, 4.90, 4.75, 4.50, 4.00, 3.40, 2.80, 2.30, 2, 1.80]
+inflationSupply = [13089600, 13011840, 12908160, 12700800, 12312000, 11664000, 10368000, 8812800, 7257600, 5961600, 5184000, 4665600]
 
+priceofBeets = float(json_beetsprice['data']['tokenPrices'][0]['price'])
+print('current price of beets', priceofBeets)
+TVL_FTM_Beets = float(json_TVL['data']['pool']['totalLiquidity'])
+FTM_BlocksPerSecond = .87
+APRcalculated = (emissionList[0]*FTM_Beetspoolweight*priceofBeets*FTM_BlocksPerSecond*secondsInAYr/TVL_FTM_Beets)*100
+print('apr calculated', APRcalculated)
 #market cap underlying asset fluctation math
 #marketCapGrowth = 1
 tokenSupplyCurrent = 13760759
@@ -32,8 +40,7 @@ marketCap = 10000000
 #print('the yearly APR sum return is', yearlyReturnAPR)
 
 
-emissionList = [5.05, 5.02, 4.98, 4.90, 4.75, 4.50, 4.00, 3.40, 2.80, 2.30, 2, 1.80]
-inflationSupply = [13089600, 13011840, 12908160, 12700800, 12312000, 11664000, 10368000, 8812800, 7257600, 5961600, 5184000, 4665600]
+
 time = 1/360
 n = 30
 i = 1
@@ -86,6 +93,7 @@ for x in emissionList:
         marketCapBool = False
     marketCap = marketCap + inflationSupply[j]*scaryNumber
     priceofBeets = marketCap/totalTokenSupply
+
     #print('price of beets', priceofBeets)
     #take a snap with exponential interest added for the period
     #APR calculation for reference A = P*(1 + r/n)^nt and modification
