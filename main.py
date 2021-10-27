@@ -4,8 +4,8 @@
 #TODO clean up code so it doesn't look like cobbled together dog shit
 from bs4 import BeautifulSoup
 import requests
-import Blocktime
-
+import blockTime
+import compoundingSchedule
 
 json = {'query': '{ pool(id:"0xcde5a11a4acb4ee4c805352cec57e236bdbc3837000200000000000000000019") { name, totalLiquidity, id}}'}
 url = "https://graph-node.beets-ftm-node.com/subgraphs/name/beethovenx"
@@ -17,13 +17,13 @@ beetsperblock = 5.05
 principal = 10000
 FTM_Beetspoolweight = .3012
 secondsInAYr = 31536000
-priceofBeets = 1.66
+priceofBeets = 1.16
 TVL_FTM_Beets = float(json_response['data']['pool']['totalLiquidity'])
-FTM_BlocksPerSecond = 1.07
+FTM_BlocksPerSecond = .87
 APRcalculated = (beetsperblock*FTM_Beetspoolweight*priceofBeets*FTM_BlocksPerSecond*secondsInAYr/TVL_FTM_Beets)*100
 
 #market cap underlying asset fluctation math
-marketCapGrowth = 1
+#marketCapGrowth = 1
 tokenSupplyCurrent = 13760759
 tokenSupplyStarting = 5000000
 totalTokenSupply = 0
@@ -54,7 +54,7 @@ i = 0
 j = 0
 Amount = principal
 #initialize temp
-exponentiation = (1 + (17.13 / En))
+exponentiation = (1 + (6.83 / En))
 #snapshot of 12 times over a year
 startBool = True
 daysSinceLaunch = 0
@@ -62,7 +62,7 @@ marketCapBool = True
 beetsMarketGrowthInt = 10000000
 startingPriceOfBeets = priceofBeets
 pricelist = []
-scaryNumber = 1
+scaryNumber = 0.95
 for x in emissionList:
     #Depreciating interest rate based on emission schedule
     interestRate = (x * FTM_Beetspoolweight * priceofBeets * FTM_BlocksPerSecond * secondsInAYr / TVL_FTM_Beets)
@@ -96,7 +96,7 @@ for x in emissionList:
     #print('change in price percent', changeInPricePercent)
     #change in price of beets is the scariest number and can be changed here
     Amount =  (Amount * (scaryNumber) * exponentiation)
-    #print('Amount Snapshot ', Amount)
+    print('Amount Snapshot ', Amount)
     Amount = Amount/exponentiation
     #print('amount after division', Amount)
     #capture a percentage of all beets that are minted and add them to the TVL pool that is captured
